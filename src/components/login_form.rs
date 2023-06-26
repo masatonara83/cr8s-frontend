@@ -1,4 +1,3 @@
-use gloo_console::log;
 use web_sys::HtmlInputElement;
 use yew::{platform::spawn_local, prelude::*};
 use yew_router::prelude::*;
@@ -9,6 +8,7 @@ use crate::Route;
 use crate::components::alert::Alert;
 use crate::components::alert::AlertType;
 use crate::components::input::Input;
+use crate::contexts::{CurrentUserActions, CurrentUserContext, CurrentUserDispatchActions};
 async fn login(
     username: String,
     password: String,
@@ -20,7 +20,12 @@ async fn login(
 
 #[function_component(LoginForm)]
 pub fn login_form() -> Html {
+    //リダイレクトする
     let navigator = use_navigator();
+    //コンテキストを取得
+    let current_user_ctx =
+        use_context::<CurrentUserContext>().expect("Current user context id missing");
+
     let username_handle = use_state(String::default);
     let username = (*username_handle).clone();
 
@@ -54,10 +59,17 @@ pub fn login_form() -> Html {
         let cloned_password = cloned_password.clone();
         let cloned_error_handle = error_message_handle.clone();
         let cloned_navigator = navigator.clone();
+        let cloned_user_ctx = current_user_ctx.clone();
         spawn_local(async move {
             match login(cloned_username.clone(), cloned_password.clone()).await {
                 Ok(responses) => {
-                    log!(responses.1.username);
+                    //ログイン成功後にコンテキストに値をセット
+                    cloned_user_ctx.dispatch(CurrentUserDispatchActions {
+                        action_type: CurrentUserActions::LoginSuccess,
+                        login_response: Some(responses.0),
+                        me_response: Some(responses.1),
+                    });
+                    //リダイレクト先へ遷移
                     if let Some(nav) = cloned_navigator {
                         nav.push(&Route::Home);
                     }
