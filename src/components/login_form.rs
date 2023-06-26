@@ -1,8 +1,10 @@
 use gloo_console::log;
 use web_sys::HtmlInputElement;
 use yew::{platform::spawn_local, prelude::*};
+use yew_router::prelude::*;
 
 use crate::api::user::{api_login, api_me, LoginResponse, MeResponse};
+use crate::Route;
 
 use crate::components::alert::Alert;
 use crate::components::alert::AlertType;
@@ -18,6 +20,7 @@ async fn login(
 
 #[function_component(LoginForm)]
 pub fn login_form() -> Html {
+    let navigator = use_navigator();
     let username_handle = use_state(String::default);
     let username = (*username_handle).clone();
 
@@ -50,9 +53,15 @@ pub fn login_form() -> Html {
         let cloned_username = cloned_username.clone();
         let cloned_password = cloned_password.clone();
         let cloned_error_handle = error_message_handle.clone();
+        let cloned_navigator = navigator.clone();
         spawn_local(async move {
             match login(cloned_username.clone(), cloned_password.clone()).await {
-                Ok(responses) => log!(responses.1.username),
+                Ok(responses) => {
+                    log!(responses.1.username);
+                    if let Some(nav) = cloned_navigator {
+                        nav.push(&Route::Home);
+                    }
+                }
                 Err(e) => cloned_error_handle.set(e.to_string()),
             }
         });
