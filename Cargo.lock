@@ -63,6 +63,7 @@ version = "0.1.0"
 dependencies = [
  "gloo-console",
  "gloo-net 0.2.6",
+ "gloo-storage",
  "serde",
  "serde_json",
  "web-sys",
