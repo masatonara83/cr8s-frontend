@@ -33,7 +33,7 @@ fn switch(route: Route) -> Html {
             <pages::not_found::NotFound />
         },
         _ => html! {
-            <pages::login::Login />
+            <pages::home::Home />
         },
     }
 }

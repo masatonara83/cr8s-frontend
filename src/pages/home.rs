@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::{contexts::CurrentUserContext, Route};
+use crate::{components::sidebar::Sidebar, contexts::CurrentUserContext, Route};
 
 #[function_component(Home)]
 pub fn home() -> Html {
@@ -11,11 +11,14 @@ pub fn home() -> Html {
         Some(user) => {
             html! {
                 <div class="container">
-                    <p class="text-center">
-                      {"Welcome user "}{user.username.clone()} <br/>
-                      <small>{"with ID "}{user.id.clone()}</small><br/>
-                      <small>{"created at "}{user.created_at.clone()}</small>
-                    </ p>
+                    <div class="row">
+                      <div class="col">
+                        <Sidebar />
+                      </div>
+                      <div class="col">
+                        {"Welcome user "}{user.username.clone()}
+                      </div>
+                    </div>
                 </div>
             }
         }
