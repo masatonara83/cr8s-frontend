@@ -1,10 +1,11 @@
 use yew::prelude::*;
 
 use crate::components::header::Header;
+use crate::components::rustacean_form::RustaceanForm;
 use crate::components::sidebar::Sidebar;
 
-#[function_component(Home)]
-pub fn home() -> Html {
+#[function_component(RustaceansAdd)]
+pub fn rustaceans_add() -> Html {
     html! {
         <div class="container">
             <div class="row">
@@ -13,7 +14,7 @@ pub fn home() -> Html {
               </div>
               <div class="col mt-3">
                 <Header />
-                {"Have a great day!"}
+                <RustaceanForm />
               </div>
             </div>
         </div>

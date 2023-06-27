@@ -21,7 +21,7 @@ async fn login(
 #[function_component(LoginForm)]
 pub fn login_form() -> Html {
     //リダイレクトする
-    let navigator = use_navigator();
+    let navigator = use_navigator().expect("Navigator not available");
     //コンテキストを取得
     let current_user_ctx =
         use_context::<CurrentUserContext>().expect("Current user context id missing");
@@ -70,9 +70,7 @@ pub fn login_form() -> Html {
                         me_response: Some(responses.1),
                     });
                     //リダイレクト先へ遷移
-                    if let Some(nav) = cloned_navigator {
-                        nav.push(&Route::Home);
-                    }
+                    cloned_navigator.push(&Route::Home);
                 }
                 Err(e) => cloned_error_handle.set(e.to_string()),
             }
