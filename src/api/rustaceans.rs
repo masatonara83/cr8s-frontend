@@ -5,7 +5,7 @@ use serde_json::json;
 
 use super::APP_HOST;
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, PartialEq)]
 pub struct Rustacean {
     pub id: i32,
     pub name: String,
