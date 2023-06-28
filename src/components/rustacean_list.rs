@@ -1,17 +1,18 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::contexts::CurrentUserContext;
 use crate::hooks::use_rustaceans;
 use crate::Route;
 
-#[function_component(RustaceanList)]
-pub fn rustacean_list() -> HtmlResult {
-    let current_user_ctx =
-        use_context::<CurrentUserContext>().expect("Current user context id missing");
-    let token = current_user_ctx.token.as_ref().expect("Token not found");
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub token: AttrValue,
+}
 
-    let rustaceans = use_rustaceans(&token)?;
+#[function_component(RustaceanList)]
+pub fn rustacean_list(props: &Props) -> HtmlResult {
+    let rustaceans = use_rustaceans(&props.token)?;
+
     Ok(html! {
       <>
         <p>
@@ -39,11 +40,13 @@ pub fn rustacean_list() -> HtmlResult {
                       <td>{r.email}</td>
                       <td>{r.created_at}</td>
                       <td>
-                        <Link<Route> to={Route::RustaceansAdd}>
-                          {"edit"}
+                        <Link<Route>
+                          to={Route::RustaceansEdit { id: r.id }}
+                          classes="link-secondary">
+                            {"edit"}
                         </Link<Route>>
-                        <span>{" / "}</span>
-                        <Link<Route> to={Route::RustaceansAdd}>
+                        <span class="mx-1">{"/"}</span>
+                        <Link<Route> to={Route::RustaceansAdd} classes="link-danger">
                           {"delete"}
                         </Link<Route>>
                       </td>

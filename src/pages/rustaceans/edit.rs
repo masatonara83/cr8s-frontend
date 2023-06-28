@@ -2,19 +2,26 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::header::Header;
-use crate::components::rustacean_list::RustaceanList;
+use crate::components::rustacean_form::RustaceanForm;
 use crate::components::sidebar::Sidebar;
 use crate::contexts::CurrentUserContext;
+use crate::hooks::use_rustacean;
 use crate::Route;
 
-#[function_component(Rustaceans)]
-pub fn rustaceans() -> Html {
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub rustacean_id: i32,
+}
+
+#[function_component(RustaceansEdit)]
+pub fn rustaceans_edit(props: &Props) -> Html {
     let current_user_ctx =
         use_context::<CurrentUserContext>().expect("Current user context id missing");
 
     match &current_user_ctx.token {
         Some(token) => {
             let loading = html! { <p>{"Loading..."} </p>};
+
             html! {
                 <div class="container">
                     <div class="row">
@@ -24,7 +31,10 @@ pub fn rustaceans() -> Html {
                       <div class="col mt-3">
                         <Header />
                         <Suspense fallback={loading}>
-                          <RustaceanList token={token.clone()} />
+                            <RustaceanEditForm
+                                rustacean_id={props.rustacean_id}
+                                token={token.clone()}
+                            />
                         </Suspense>
                       </div>
                     </div>
@@ -32,7 +42,22 @@ pub fn rustaceans() -> Html {
             }
         }
         None => html! {
-            <Redirect<Route> to={Route::Login} />
+          <Redirect<Route> to={Route::Login} />
         },
     }
+}
+
+#[derive(Properties, PartialEq)]
+struct RustaceansEditFormProps {
+    pub rustacean_id: i32,
+    pub token: AttrValue,
+}
+
+#[function_component(RustaceanEditForm)]
+fn rustaceans_edit_form(props: &RustaceansEditFormProps) -> HtmlResult {
+    let rustacean = use_rustacean(props.token.as_str(), props.rustacean_id.clone())?;
+
+    Ok(html! {
+        <RustaceanForm rustacean={rustacean} />
+    })
 }

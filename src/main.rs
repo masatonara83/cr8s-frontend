@@ -15,6 +15,8 @@ enum Route {
     Rustaceans,
     #[at("/rustacreans/add")]
     RustaceansAdd,
+    #[at("/rustacreans/:id/edit")]
+    RustaceansEdit {id: i32},
     #[at("/crates")]
     Crates,
     #[at("/login")]
@@ -40,6 +42,9 @@ fn switch(route: Route) -> Html {
         },
         Route::RustaceansAdd => html! {
             <pages::rustaceans::add::RustaceansAdd />
+        },
+        Route::RustaceansEdit {id} => html! {
+            <pages::rustaceans::edit::RustaceansEdit rustacean_id={id} />
         },
         _ => html! {
             <pages::home::Home />

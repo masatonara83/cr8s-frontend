@@ -3,25 +3,42 @@ use yew::{platform::spawn_local, prelude::*};
 use yew_router::prelude::*;
 
 use crate::api::rustaceans::api_rustacean_create;
+use crate::api::rustaceans::Rustacean;
 use crate::Route;
 
+use crate::api::rustaceans::api_rustacean_update;
 use crate::components::alert::Alert;
 use crate::components::alert::AlertType;
 use crate::components::input::Input;
 use crate::contexts::CurrentUserContext;
 
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub rustacean: Option<Rustacean>,
+}
+
 #[function_component(RustaceanForm)]
-pub fn rustacean_form() -> Html {
+pub fn rustacean_form(props: &Props) -> Html {
     //リダイレクトする
     let navigator = use_navigator().expect("Navigator not available");
     //コンテキストを取得
     let current_user_ctx =
         use_context::<CurrentUserContext>().expect("Current user context id missing");
 
-    let name_handle = use_state(String::default);
+    let name_handle = use_state(|| {
+        if let Some(r) = &props.rustacean {
+            return r.name.clone();
+        }
+        String::default()
+    });
     let name = (*name_handle).clone();
 
-    let email_handle = use_state(String::default);
+    let email_handle = use_state(|| {
+        if let Some(r) = &props.rustacean {
+            return r.email.clone();
+        }
+        String::default()
+    });
     let email = (*email_handle).clone();
 
     let error_message_handle = use_state(String::default);
@@ -43,30 +60,46 @@ pub fn rustacean_form() -> Html {
 
     let cloned_name = name.clone();
     let cloned_email = email.clone();
+    let cloned_rustacean = props.rustacean.clone();
 
     let onsubmit = Callback::from(move |e: SubmitEvent| {
         e.prevent_default();
 
         let cloned_name = cloned_name.clone();
         let cloned_email = cloned_email.clone();
+        let cloned_rustacean = cloned_rustacean.clone();
+
         let cloned_error_handle = error_message_handle.clone();
         let cloned_navigator = navigator.clone();
         let cloned_user_ctx = current_user_ctx.clone();
         match &cloned_user_ctx.token {
             Some(token) => {
                 let cloned_token = token.clone();
+
                 spawn_local(async move {
-                    match api_rustacean_create(
-                        &cloned_token,
-                        cloned_name.clone(),
-                        cloned_email.clone(),
-                    )
-                    .await
-                    {
-                        Ok(_) => {
-                            cloned_navigator.push(&Route::Rustaceans);
+                    if let Some(rustacean) = cloned_rustacean {
+                        match api_rustacean_update(
+                            &cloned_token,
+                            rustacean.id.clone(),
+                            cloned_name.clone(),
+                            cloned_email.clone(),
+                        )
+                        .await
+                        {
+                            Ok(_) => cloned_navigator.push(&Route::Rustaceans),
+                            Err(e) => cloned_error_handle.set(e.to_string()),
                         }
-                        Err(e) => cloned_error_handle.set(e.to_string()),
+                    } else {
+                        match api_rustacean_create(
+                            &cloned_token,
+                            cloned_name.clone(),
+                            cloned_email.clone(),
+                        )
+                        .await
+                        {
+                            Ok(_) => cloned_navigator.push(&Route::Rustaceans),
+                            Err(e) => cloned_error_handle.set(e.to_string()),
+                        }
                     }
                 });
             }
