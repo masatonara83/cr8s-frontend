@@ -4,6 +4,7 @@ use yew_router::prelude::*;
 
 use crate::api::rustaceans::api_rustacean_create;
 use crate::api::rustaceans::Rustacean;
+use crate::components::button::Button;
 use crate::Route;
 
 use crate::api::rustaceans::api_rustacean_update;
@@ -133,7 +134,7 @@ pub fn rustacean_form(props: &Props) -> Html {
             onchange={email_changed}
           />
         </div>
-          <button type="submit" class="btn btn-primary">{"Save"}</button>
+          <Button button_type="primary" label="Save" />
       </form>
     }
 }

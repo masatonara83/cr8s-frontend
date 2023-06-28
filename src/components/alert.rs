@@ -8,7 +8,7 @@ pub struct Props {
 
 #[derive(PartialEq)]
 pub enum AlertType {
-    _Info,
+    Info,
     _Success,
     Danger,
 }
@@ -16,7 +16,7 @@ pub enum AlertType {
 #[function_component(Alert)]
 pub fn alert(props: &Props) -> Html {
     let alert_type = match props.alert_type {
-        AlertType::_Info => "info".to_string(),
+        AlertType::Info => "info".to_string(),
         AlertType::_Success => "success".to_string(),
         AlertType::Danger => "danger".to_string(),
     };

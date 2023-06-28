@@ -42,11 +42,14 @@ pub fn rustacean_list(props: &Props) -> HtmlResult {
                       <td>
                         <Link<Route>
                           to={Route::RustaceansEdit { id: r.id }}
-                          classes="link-secondary">
-                            {"edit"}
+                          classes="link-secondary"
+                        >
+                          {"edit"}
                         </Link<Route>>
                         <span class="mx-1">{"/"}</span>
-                        <Link<Route> to={Route::RustaceansAdd} classes="link-danger">
+                        <Link<Route> to={Route::RustaceansDelete { id: r.id }}
+                          classes="link-danger"
+                        >
                           {"delete"}
                         </Link<Route>>
                       </td>

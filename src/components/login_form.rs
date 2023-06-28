@@ -3,6 +3,7 @@ use yew::{platform::spawn_local, prelude::*};
 use yew_router::prelude::*;
 
 use crate::api::user::{api_login, api_me, LoginResponse, MeResponse};
+use crate::components::button::Button;
 use crate::Route;
 
 use crate::components::alert::Alert;
@@ -103,7 +104,7 @@ pub fn login_form() -> Html {
             onchange={password_changed}
           />
         </div>
-          <button type="submit" class="btn btn-primary">{"Login"}</button>
+          <Button button_type="primary" label="Login" />
       </form>
     }
 }
