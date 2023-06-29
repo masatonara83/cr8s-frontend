@@ -21,6 +21,12 @@ enum Route {
     RustaceansDelete { id: i32 },
     #[at("/crates")]
     Crates,
+    #[at("/crates/add")]
+    CratesAdd,
+    #[at("/crates/:id/edit")]
+    CratesEdit { id: i32 },
+    #[at("/crates/:id/delete")]
+    CratesDelete { id: i32 },
     #[at("/login")]
     Login,
     #[not_found]
@@ -51,8 +57,17 @@ fn switch(route: Route) -> Html {
         Route::RustaceansDelete { id } => html! {
             <pages::rustaceans::delete::RustaceansDelete rustacean_id={id} />
         },
-        _ => html! {
-            <pages::home::Home />
+        Route::Crates => html! {
+            <pages::crates::index::Crates />
+        },
+        Route::CratesAdd => html! {
+            <pages::crates::add::CratesAdd />
+        },
+        Route::CratesEdit { id } => html! {
+            <pages::crates::index::Crates />
+        },
+        Route::CratesDelete { id } => html! {
+            <pages::crates::index::Crates />
         },
     }
 }
