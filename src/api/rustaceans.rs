@@ -3,7 +3,7 @@ use gloo_net::Error;
 use serde::Deserialize;
 use serde_json::json;
 
-use super::APP_HOST;
+use super::{APP_HOST, AUTHORIZATION, CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE};
 
 #[derive(Deserialize, Clone, PartialEq)]
 pub struct Rustacean {
@@ -24,7 +24,7 @@ pub async fn api_rustaceans(token: &String) -> Result<Vec<Rustacean>, Error> {
 
 pub async fn api_rustacean_show(token: &String, id: i32) -> Result<Rustacean, Error> {
     let response = Request::get(&format!("{}/rustaceans/{}", APP_HOST, id))
-        .header("Authorization", &format!("Bearer {}", token))
+        .header(AUTHORIZATION, &format!("Bearer {}", token))
         .send()
         .await?;
 
@@ -38,6 +38,7 @@ pub async fn api_rustacean_create(
 ) -> Result<Rustacean, Error> {
     let response = Request::post(&format!("{}/rustaceans", APP_HOST))
         .header("Authorization", &format!("Bearer {}", token))
+        .header(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE)
         .json(&json!({
             "name": name,
             "email": email
@@ -56,6 +57,7 @@ pub async fn api_rustacean_update(
 ) -> Result<Rustacean, Error> {
     let response = Request::put(&format!("{}/rustaceans/{}", APP_HOST, id))
         .header("Authorization", &format!("Bearer {}", token))
+        .header(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE)
         .json(&json!({
             "name": name,
             "email": email

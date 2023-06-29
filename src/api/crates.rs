@@ -3,7 +3,7 @@ use gloo_net::Error;
 use serde::Deserialize;
 use serde_json::json;
 
-use super::APP_HOST;
+use super::{APP_HOST, AUTHORIZATION, CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE};
 
 #[derive(Deserialize, Clone, PartialEq)]
 pub struct Crate {
@@ -25,12 +25,21 @@ pub async fn api_crates(token: &String) -> Result<Vec<Crate>, Error> {
     response.json::<Vec<Crate>>().await
 }
 
-pub async fn api_crate_create(token: &String, name: String, code: String) -> Result<Crate, Error> {
+pub async fn api_crate_create(
+    token: &String,
+    name: String,
+    code: String,
+    rustacean_id: i32,
+    version: String,
+) -> Result<Crate, Error> {
     let response = Request::post(&format!("{}/crates", APP_HOST))
-        .header("Authorization", &format!("Bearer {}", token))
+        .header(AUTHORIZATION, &format!("Bearer {}", token))
+        .header(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE)
         .json(&json!({
             "name": name,
-            "code": code
+            "code": code,
+            "rustacean_id": rustacean_id,
+            "version": version
         }))?
         .send()
         .await?;
@@ -46,6 +55,7 @@ pub async fn api_crate_update(
 ) -> Result<Crate, Error> {
     let response = Request::put(&format!("{}/crates/{}", APP_HOST, id))
         .header("Authorization", &format!("Bearer {}", token))
+        .header(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE)
         .json(&json!({
             "name": name,
             "email": code
