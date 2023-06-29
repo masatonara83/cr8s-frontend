@@ -1,5 +1,6 @@
 use web_sys::HtmlInputElement;
 use web_sys::HtmlSelectElement;
+use web_sys::HtmlTextAreaElement;
 use yew::{platform::spawn_local, prelude::*};
 use yew_router::prelude::*;
 
@@ -14,6 +15,7 @@ use crate::components::alert::Alert;
 use crate::components::alert::AlertType;
 use crate::components::input::Input;
 use crate::components::select::Select;
+use crate::components::textarea::Textarea;
 use crate::contexts::CurrentUserContext;
 
 #[derive(Properties, PartialEq)]
@@ -66,6 +68,17 @@ pub fn crate_form(props: &Props) -> Html {
     });
     let version = (*version_handle).clone();
 
+    //descriotion用ハンドル
+    let description_handle = use_state(|| {
+        if let Some(c) = &props.a_crate {
+            if let Some(description) = c.description.clone() {
+                return description;
+            }
+        }
+        String::default()
+    });
+    let description = (*description_handle).clone();
+
     let error_message_handle = use_state(String::default);
     let error_message = (*error_message_handle).clone();
 
@@ -97,10 +110,18 @@ pub fn crate_form(props: &Props) -> Html {
         }
     });
 
+    let description_changed = Callback::from(move |e: Event| {
+        let target = e.target_dyn_into::<HtmlTextAreaElement>();
+        if let Some(input) = target {
+            description_handle.set(input.value());
+        }
+    });
+
     let cloned_name = name.clone();
     let cloned_code = code.clone();
     let cloned_version = version.clone();
     let cloned_rustacean_id = rustacean_id.clone();
+    let cloned_description = description.clone();
 
     let cloned_crate: Option<Crate> = props.a_crate.clone();
 
@@ -111,7 +132,7 @@ pub fn crate_form(props: &Props) -> Html {
         let cloned_code = cloned_code.clone();
         let cloned_version = cloned_version.clone();
         let cloned_rustacean_id = cloned_rustacean_id.clone();
-
+        let cloned_description = cloned_description.clone();
         let cloned_crate = cloned_crate.clone();
 
         let cloned_error_handle = error_message_handle.clone();
@@ -144,6 +165,7 @@ pub fn crate_form(props: &Props) -> Html {
                                     cloned_code.clone(),
                                     rustacean_id,
                                     cloned_version.clone(),
+                                    cloned_description.clone(),
                                 )
                                 .await
                                 {
@@ -213,6 +235,14 @@ pub fn crate_form(props: &Props) -> Html {
             value={rustacean_id}
             onchange={rustacean_id_changed}
             options={options}
+          />
+        </div>
+        <div class="mb-3">
+          <Textarea
+            name="description"
+            label="Description"
+            value={description}
+            onchange={description_changed}
           />
         </div>
           <Button button_type="primary" label="Save" />
