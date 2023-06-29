@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 yew = { version = "0.20", features = ["csr"]}
 yew-router = "0.17"
-web-sys = {version = "0.3", features = ["HtmlInputElement"]}
+web-sys = {version = "0.3", features = ["HtmlInputElement", "HtmlSelectElement"]}
 gloo-console = "0.2"
 gloo-net = "0.2"
 gloo-storage = "0.2"
