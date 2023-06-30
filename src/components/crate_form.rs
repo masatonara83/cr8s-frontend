@@ -152,6 +152,9 @@ pub fn crate_form(props: &Props) -> Html {
                                     a_crate.id.clone(),
                                     cloned_name.clone(),
                                     cloned_code.clone(),
+                                    rustacean_id,
+                                    cloned_version.clone(),
+                                    cloned_description.clone(),
                                 )
                                 .await
                                 {
