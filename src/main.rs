@@ -67,7 +67,7 @@ fn switch(route: Route) -> Html {
             <pages::crates::edit::CratesEdit crate_id={id} />
         },
         Route::CratesDelete { id } => html! {
-            <pages::crates::index::Crates />
+            <pages::crates::delete::CratesDelete crate_id={id} />
         },
     }
 }

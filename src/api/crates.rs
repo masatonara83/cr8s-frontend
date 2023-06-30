@@ -82,3 +82,12 @@ pub async fn api_crate_update(
 
     response.json::<Crate>().await
 }
+
+pub async fn api_crate_delete(token: &String, id: i32) -> Result<(), Error> {
+    let _ = Request::delete(&format!("{}/crates/{}", APP_HOST, id))
+        .header(AUTHORIZATION, &format!("Bearer {}", token))
+        .send()
+        .await?;
+
+    Ok(())
+}
